@@ -146,15 +146,12 @@ def health_check():
     })
 
 # Vercel serverless function handler
-def handler(request):
+def handler(event, context):
     """Main handler for Vercel serverless function"""
-    with app.test_request_context(request.path, method=request.method, 
-                                 data=request.get_data(), headers=request.headers):
-        try:
-            response = app.full_dispatch_request()
-            return response
-        except Exception as e:
-            return jsonify({"error": f"Server error: {str(e)}"}), 500
+    return app(event, context)
+
+# Configure Flask for production
+app.config['ENV'] = 'production'
 
 # For local development
 if __name__ == '__main__':
