@@ -1,9 +1,0 @@
-Battery Health Prediction Model
-=========================================
-Model Type: Random Forest
-Training Date: 2025-09-15T20:23:26.231668
-Accuracy: 0.9589 (95.89%)
-F1-Score: 0.9588
-Precision: 0.9626
-Recall: 0.9589
-Cross-validation: 0.9489 ± 0.0067
