@@ -10,11 +10,14 @@ I've created fixes for the most common deployment issues:
 3. **✅ Added CORS headers** - Fixes frontend-API communication
 
 ### Step 2: Commit & Deploy
+**🚨 FIXED: Package Metadata Error**
 ```bash
 git add .
-git commit -m "Fix Vercel deployment configuration"
+git commit -m "Fix Vercel package compatibility issues"
 git push origin main
 ```
+
+**Note:** Updated `requirements.txt` with compatible versions to fix the pandas metadata error.
 
 ### Step 3: Check Vercel Dashboard
 1. Go to your [Vercel Dashboard](https://vercel.com/dashboard)
@@ -48,14 +51,21 @@ curl -X POST https://YOUR-APP.vercel.app/api/predict \
 - Ensure `models/battery_model.pkl` exists in GitHub
 - File size should be under 50MB
 
-### Issue 2: "Module not found" 
-**Solution:** Check `requirements.txt`
+### Issue 2: "Module not found" or Package Metadata Error
+**Solution:** Use compatible package versions
 ```
-flask==3.0.0
-pandas==2.1.0
-numpy==1.26.0
-scikit-learn==1.7.1
-joblib==1.3.2
+# Main requirements.txt (recommended)
+flask==2.3.3
+pandas==2.0.3
+numpy==1.24.3
+scikit-learn==1.3.0
+joblib==1.3.1
+
+# If pandas still fails, use requirements-minimal.txt
+flask==2.3.3
+numpy==1.24.3
+scikit-learn==1.3.0
+joblib==1.3.1
 ```
 
 ### Issue 3: Frontend loads but API fails

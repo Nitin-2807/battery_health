@@ -1,6 +1,5 @@
-# Vercel Deployment - Compatible Dependencies
+# Ultra-minimal requirements for Vercel
 flask==2.3.3
-pandas==2.0.3
 numpy==1.24.3
 scikit-learn==1.3.0
 joblib==1.3.1
