@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Battery Health Prediction</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <i class="fas fa-car-battery"></i>
+        <span>BatteryAI</span>
+      </div>
+      <div id="apiStatus" class="api-status"></div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div class="hero-section">
+        <h1 class="title">
+          <span class="gradient-text">Smart Battery</span>
+          <span class="title-secondary">Health Prediction</span>
+        </h1>
+        <p class="subtitle">Advanced AI-powered diagnostics for your vehicle's battery system</p>
+      </div>
+
+      <div class="prediction-card">
+        <div class="card-header">
+          <h2><i class="fas fa-analytics"></i> Battery Analysis</h2>
+          <p>Enter your battery parameters for instant health assessment</p>
+        </div>
+
+        <form id="batteryForm" class="battery-form">
+          <div class="form-grid">
+            <div class="input-group">
+              <label for="voltage">
+                <i class="fas fa-bolt"></i>
+                Voltage (V)
+              </label>
+              <input type="number" step="0.01" id="voltage" required placeholder="12.6">
+              <span class="input-hint">Typical range: 11.5 - 14.0V</span>
+            </div>
+
+            <div class="input-group">
+              <label for="current">
+                <i class="fas fa-wave-square"></i>
+                Current (A)
+              </label>
+              <input type="number" step="0.1" id="current" required placeholder="150">
+              <span class="input-hint">Typical range: 100 - 300A</span>
+            </div>
+
+            <div class="input-group">
+              <label for="temperature">
+                <i class="fas fa-thermometer-half"></i>
+                Temperature (°C)
+              </label>
+              <input type="number" step="0.1" id="temperature" required placeholder="25">
+              <span class="input-hint">Range: -50 to 100°C</span>
+            </div>
+
+            <div class="input-group">
+              <label for="age_months">
+                <i class="fas fa-calendar-alt"></i>
+                Age (months)
+              </label>
+              <input type="number" id="age_months" required placeholder="24">
+              <span class="input-hint">Battery age in months</span>
+            </div>
+
+            <div class="input-group">
+              <label for="resistance">
+                <i class="fas fa-resistor"></i>
+                Resistance (Ω)
+              </label>
+              <input type="number" step="0.001" id="resistance" required placeholder="0.03">
+              <span class="input-hint">Internal resistance</span>
+            </div>
+          </div>
+
+          <button type="submit" class="analyze-btn">
+            <span class="btn-text">
+              <i class="fas fa-search"></i>
+              Analyze Battery Health
+            </span>
+            <div class="btn-loader">
+              <div class="spinner"></div>
+              Analyzing...
+            </div>
+          </button>
+        </form>
+
+        <div id="result" class="result-section"></div>
+      </div>
+
+      <!-- Features Section -->
+      <div class="features-grid">
+        <div class="feature-card">
+          <i class="fas fa-brain"></i>
+          <h3>AI-Powered</h3>
+          <p>Advanced machine learning algorithms for accurate predictions</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-tachometer-alt"></i>
+          <h3>Real-time Analysis</h3>
+          <p>Instant battery health assessment in milliseconds</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-shield-alt"></i>
+          <h3>Reliable Results</h3>
+          <p>Trained on extensive battery performance datasets</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>&copy; 2025 BatteryAI. Powered by Machine Learning.</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
