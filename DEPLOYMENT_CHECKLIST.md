@@ -10,14 +10,17 @@ I've created fixes for the most common deployment issues:
 3. **✅ Added CORS headers** - Fixes frontend-API communication
 
 ### Step 2: Commit & Deploy
-**🚨 FIXED: Package Metadata Error**
+**🚨 FIXED: Pip Installation Error**
 ```bash
 git add .
-git commit -m "Fix Vercel package compatibility issues"
+git commit -m "Ultra-minimal requirements for Vercel Python 3.12"
 git push origin main
 ```
 
-**Note:** Updated `requirements.txt` with compatible versions to fix the pandas metadata error.
+**Changes Made:**
+- ✅ Removed pandas dependency (causing pip errors)
+- ✅ Used minimal package versions without version pins
+- ✅ Simplified vercel.json to new functions format
 
 ### Step 3: Check Vercel Dashboard
 1. Go to your [Vercel Dashboard](https://vercel.com/dashboard)

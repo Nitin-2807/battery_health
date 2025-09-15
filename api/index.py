@@ -1,8 +1,8 @@
 """
-Simplified Vercel-compatible API for battery health prediction
+Pandas-free Vercel-compatible API for battery health prediction
 """
 import json
-import pandas as pd
+import numpy as np
 import joblib
 from pathlib import Path
 
@@ -31,7 +31,12 @@ def handler(event, context):
         if not load_models():
             return {
                 'statusCode': 500,
-                'headers': {'Content-Type': 'application/json'},
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type'
+                },
                 'body': json.dumps({"error": "Failed to load ML models"})
             }
         
@@ -39,16 +44,32 @@ def handler(event, context):
         http_method = event.get('httpMethod', 'GET')
         path = event.get('path', '/')
         
+        # Handle CORS preflight
+        if http_method == 'OPTIONS':
+            return {
+                'statusCode': 200,
+                'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+                    'Access-Control-Allow-Headers': 'Content-Type'
+                },
+                'body': ''
+            }
+        
         # Health check endpoint
         if path.endswith('/health') or http_method == 'GET':
             return {
                 'statusCode': 200,
-                'headers': {'Content-Type': 'application/json'},
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
                 'body': json.dumps({
                     "status": "healthy",
                     "service": "Battery Health Prediction API",
-                    "version": "2.0.0",
-                    "model_loaded": True
+                    "version": "2.1.0",
+                    "model_loaded": True,
+                    "framework": "pandas-free"
                 })
             }
         
@@ -62,34 +83,45 @@ def handler(event, context):
                 if field not in body:
                     return {
                         'statusCode': 400,
-                        'headers': {'Content-Type': 'application/json'},
+                        'headers': {
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        },
                         'body': json.dumps({"error": f"Missing field: {field}"})
                     }
             
-            # Extract values
-            voltage = float(body['voltage'])
-            current = float(body['current'])
-            temperature = float(body['temperature'])
-            age_months = int(body['age_months'])
-            resistance = float(body.get('resistance', 0.03))
+            # Extract and validate values
+            try:
+                voltage = float(body['voltage'])
+                current = float(body['current'])
+                temperature = float(body['temperature'])
+                age_months = int(body['age_months'])
+                resistance = float(body.get('resistance', 0.03))
+            except (ValueError, TypeError):
+                return {
+                    'statusCode': 400,
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    'body': json.dumps({"error": "Invalid number format in input"})
+                }
             
             # Validate ranges
             if not (10.5 <= voltage <= 13.0):
                 return {
                     'statusCode': 400,
-                    'headers': {'Content-Type': 'application/json'},
+                    'headers': {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
                     'body': json.dumps({"error": "Voltage must be between 10.5V and 13.0V"})
                 }
             
-            # Create prediction
-            features = pd.DataFrame([{
-                "voltage": voltage,
-                "current": current,
-                "temperature": temperature,
-                "age_months": age_months,
-                "resistance": resistance
-            }])
+            # Create feature array (no pandas)
+            features = np.array([[voltage, current, temperature, age_months, resistance]])
             
+            # Scale features and make prediction
             features_scaled = scaler.transform(features)
             prediction = model.predict(features_scaled)[0]
             probabilities = model.predict_proba(features_scaled)[0]
@@ -108,6 +140,8 @@ def handler(event, context):
                 risk_factors.append("High age")
             if resistance > 0.05:
                 risk_factors.append("High resistance")
+            if temperature > 35:
+                risk_factors.append("High temperature")
             
             # Recommendations
             recommendations = []
@@ -131,7 +165,14 @@ def handler(event, context):
                     "failed": round(float(probabilities[2]) * 100, 1)
                 },
                 "risk_factors": risk_factors,
-                "recommendations": recommendations
+                "recommendations": recommendations,
+                "input_values": {
+                    "voltage": voltage,
+                    "current": current,
+                    "temperature": temperature,
+                    "age_months": age_months,
+                    "resistance": resistance
+                }
             }
             
             return {
@@ -148,13 +189,19 @@ def handler(event, context):
         # Method not allowed
         return {
             'statusCode': 405,
-            'headers': {'Content-Type': 'application/json'},
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
             'body': json.dumps({"error": "Method not allowed"})
         }
         
     except Exception as e:
         return {
             'statusCode': 500,
-            'headers': {'Content-Type': 'application/json'},
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
             'body': json.dumps({"error": f"Server error: {str(e)}"})
         }
