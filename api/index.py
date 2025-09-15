@@ -4,10 +4,12 @@ Pandas-free Vercel-compatible API for battery health prediction
 import json
 import numpy as np
 import joblib
-from pathlib import Path
+from huggingface_hub import hf_hub_download
 
 # Load models once when function starts
-model_dir = Path(__file__).parent.parent / "models"
+REPO_ID = "nitin-y2309/battery_health"
+MODEL_FILE = "battery_model.pkl"
+SCALER_FILE = "battery_scaler.pkl"
 model = None
 scaler = None
 
@@ -16,9 +18,11 @@ def load_models():
     global model, scaler
     try:
         if model is None:
-            model = joblib.load(model_dir / "battery_model.pkl")
+            model_path = hf_hub_download(repo_id=REPO_ID, filename=MODEL_FILE)
+            model = joblib.load(model_path)
         if scaler is None:
-            scaler = joblib.load(model_dir / "battery_scaler.pkl")
+            scaler_path = hf_hub_download(repo_id=REPO_ID, filename=SCALER_FILE)
+            scaler = joblib.load(scaler_path)
         return True
     except Exception as e:
         print(f"Model loading error: {e}")
@@ -68,7 +72,9 @@ def handler(event, context):
                     "status": "healthy",
                     "service": "Battery Health Prediction API",
                     "version": "2.1.0",
-                    "model_loaded": True,
+                    "model_loaded": model is not None and scaler is not None,
+                    "model_source": "Hugging Face Hub",
+                    "model_url": f"https://huggingface.co/{REPO_ID}/tree/main",
                     "framework": "pandas-free"
                 })
             }
